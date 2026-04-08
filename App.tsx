@@ -1,20 +1,31 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
+import { useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { HomeScreen } from './src/screens/HomeScreen';
+import { JuiceDetailScreen } from './src/screens/JuiceDetailScreen';
+import type { Juice } from './src/types/juice';
+import "./global.css";   // or correct path
 export default function App() {
+  const [selected, setSelected] = useState<Juice | null>(null);
+
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider>
+      <View style={styles.root}>
+        {selected ? (
+          <JuiceDetailScreen juice={selected} onBack={() => setSelected(null)} />
+        ) : (
+          <HomeScreen onOpenJuice={setSelected} />
+        )}
+        <StatusBar style="dark" />
+      </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: '#F8FAF5',
   },
 });
