@@ -1,57 +1,24 @@
 {
   "expo": {
-    "name": "Sermcy",
+    "name": "sermcy",
     "slug": "sermcy",
     "version": "1.0.0",
-    "scheme": "sermcy",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "backgroundColor": "#F5E6D3",
-    "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#F5E6D3"
-    },
-    "plugins": [
-      "expo-router",
-      [
-        "expo-location",
-        {
-          "locationAlwaysAndWhenInUsePermission": "Allow Sermcy to use your location for delivery."
-        }
-      ]
+    "platforms": [
+      "android"
     ],
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#F5E6D3"
-      },
-      "package": "com.sermcy.app",
-      "config": {
-        "googleMaps": {
-          "apiKey": "AIzaSyAHc7vEZLIAShPNw5gPIBLMpKlxKHKO9ck"
-        }
-      },
-      "permissions": [
-        "android.permission.ACCESS_COARSE_LOCATION",
-        "android.permission.ACCESS_FINE_LOCATION"
-      ]
-    },
-    "web": {
-      "favicon": "./assets/icon.png"
+      "package": "com.chandu.sermcy"
     },
     "extra": {
-      "router": {},
       "eas": {
         "projectId": "ea58c953-d08c-4b0e-9d0a-86d066dbff6d"
       }
-    }
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-font",
+      "expo-router"
+    ]
   }
 }
