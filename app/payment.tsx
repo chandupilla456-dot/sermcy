@@ -4,9 +4,6 @@ import { useCartStore } from "../lib/cartStore";
 import { supabase } from "../lib/supabase";
 import { router } from "expo-router";
 import { theme } from "../lib/theme";
-import RazorpayCheckout from "react-native-razorpay";
-
-const RAZORPAY_KEY_ID = "rzp_test_Sb5k2TFTbA7xlF";
 
 export default function Payment() {
   const { cart, getTotal, clearCart } = useCartStore();
@@ -50,7 +47,8 @@ export default function Payment() {
     return orderData;
   };
 
-  const handleCOD = async () => {
+  const handlePlaceOrder = async () => {
+    if (cart.length === 0) { Alert.alert("Cart Empty", "Add items first"); return; }
     setLoading(true);
     try {
       const orderData = await saveOrder();
@@ -62,34 +60,7 @@ export default function Payment() {
       ]);
     } catch (err) {
       setLoading(false);
-      Alert.alert("Error", "Something went wrong");
-    }
-  };
-
-  const handleRazorpay = async () => {
-    setLoading(true);
-    try {
-      const options = {
-        description: "Sermcy Order",
-        image: "https://sermcy.netlify.app/logo.png",
-        currency: "INR",
-        key: RAZORPAY_KEY_ID,
-        amount: finalTotal * 100,
-        name: "Sermcy",
-        prefill: { contact: "9999999999", email: "customer@sermcy.com" },
-        theme: { color: theme.primary }
-      };
-      const data = await RazorpayCheckout.open(options);
-      const orderData = await saveOrder(data.razorpay_payment_id);
-      clearCart();
-      setLoading(false);
-      Alert.alert("Payment Successful!", "Order placed! Delivering in 20-30 mins.", [
-        { text: "Track Order", onPress: () => router.push({ pathname: "/ordertrack", params: { orderId: orderData.id } }) },
-        { text: "Home", onPress: () => router.replace("/") }
-      ]);
-    } catch (error) {
-      setLoading(false);
-      if (error.code !== "PAYMENT_CANCELLED") Alert.alert("Payment Failed", "Please try again");
+      Alert.alert("Error", "Something went wrong. Try again.");
     }
   };
 
@@ -162,7 +133,7 @@ export default function Payment() {
           <Text style={{ fontSize: 16, fontWeight: "700", color: theme.text, marginBottom: 16 }}>Payment Method</Text>
           {[
             { id: "cod", label: "Cash on Delivery", sub: "Pay when order arrives" },
-            { id: "online", label: "Pay Online (UPI/Card)", sub: "Razorpay - Secure & Fast" },
+            { id: "upi", label: "UPI Payment", sub: "Pay via any UPI app" },
           ].map(m => (
             <TouchableOpacity key={m.id} onPress={() => setPaymentMethod(m.id)}
               style={{ flexDirection: "row", alignItems: "center", paddingVertical: 14, borderBottomWidth: m.id === "cod" ? 1 : 0, borderBottomColor: "#E9D5FF" }}>
@@ -175,15 +146,19 @@ export default function Payment() {
               </View>
             </TouchableOpacity>
           ))}
+          {paymentMethod === "upi" && (
+            <View style={{ backgroundColor: "#FEF3C7", padding: 14, borderRadius: 14, marginTop: 12 }}>
+              <Text style={{ color: "#92400E", fontSize: 13, fontWeight: "600" }}>UPI ID: sermcy@upi</Text>
+              <Text style={{ color: "#92400E", fontSize: 12, marginTop: 4 }}>Pay and share screenshot on WhatsApp: 9949473727</Text>
+            </View>
+          )}
         </View>
 
-        <TouchableOpacity
-          onPress={paymentMethod === "cod" ? handleCOD : handleRazorpay}
-          disabled={loading}
+        <TouchableOpacity onPress={handlePlaceOrder} disabled={loading}
           style={{ backgroundColor: theme.primary, padding: 18, borderRadius: 16, alignItems: "center" }}>
           {loading ? <ActivityIndicator color="#fff" /> : (
             <Text style={{ color: "#fff", fontWeight: "bold", fontSize: 18 }}>
-              {paymentMethod === "cod" ? "Place Order" : "Pay"} Rs.{finalTotal}
+              Place Order Rs.{finalTotal}
             </Text>
           )}
         </TouchableOpacity>
